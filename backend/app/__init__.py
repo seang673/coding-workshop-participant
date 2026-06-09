@@ -13,7 +13,7 @@ jwt = JWTManager()
 def create_app(config_name: str = None) -> Flask:
     app = Flask(__name__)
 
-    from config import config_by_name
+    from app.config import config_by_name
     cfg = config_name or os.environ.get("FLASK_ENV", "development")
     app.config.from_object(config_by_name.get(cfg, config_by_name["default"]))
 
