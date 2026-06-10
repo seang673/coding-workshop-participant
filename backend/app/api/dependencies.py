@@ -4,7 +4,7 @@ from app import db
 from app.models.deliverable import Deliverable, Dependency, DependencyType
 from app.models.user import SystemRole
 from app.auth.middleware import require_auth, require_role, get_jwt_identity_uuid
-from backend.app.api.projects import success, created, error, not_found
+from app.api.helpers import success, created, error, not_found
 
 bp = Blueprint("dependencies", __name__)
 

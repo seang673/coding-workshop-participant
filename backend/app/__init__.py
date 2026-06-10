@@ -37,7 +37,7 @@ def create_app(config_name: str = None) -> Flask:
     _register_jwt_handlers(jwt)
 
     # Models
-    from app.models import user, project, deliverable, budget, time_entry  # noqa: F401
+    from app.models import user, project, deliverable, budget  # noqa: F401
 
     # Error handlers
     from app.errors import register_error_handlers

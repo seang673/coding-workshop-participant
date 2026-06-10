@@ -5,7 +5,7 @@ from app.models.project import Project, ProjectAssignment, ProjectRole
 from app.models.deliverable import Deliverable, DeliverableAssignment
 from app.models.user import User, SystemRole
 from app.auth.middleware import require_role, require_auth, get_jwt_identity_uuid, is_admin
-from backend.app.api.projects import success, created, error, not_found, forbidden
+from app.api.helpers import success, created, error, not_found, forbidden
 
 bp = Blueprint("assignments", __name__)
 

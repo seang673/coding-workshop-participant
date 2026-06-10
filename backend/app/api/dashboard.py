@@ -8,7 +8,7 @@ from app.models.deliverable import Deliverable, DeliverableAssignment, Deliverab
 from app.models.budget import BudgetEntry, BudgetType, TimeEntry
 from app.models.user import User
 from app.auth.middleware import require_auth, get_jwt_identity_uuid, is_admin
-from backend.app.api.projects import success
+from app.api.helpers import success
 
 bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 

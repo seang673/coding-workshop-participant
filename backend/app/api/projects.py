@@ -5,7 +5,7 @@ from app import db
 from app.models.project import Project, ProjectAssignment, ProjectStatus, ProjectRole
 from app.models.user import SystemRole
 from app.auth.middleware import require_auth, require_role, get_jwt_identity_uuid, is_admin
-from backend.app.api.projects import success, created, error, not_found, forbidden, paginate
+from app.api.helpers import success, created, error, not_found, forbidden, paginate
 
 bp = Blueprint("projects", __name__, url_prefix="/projects")
 

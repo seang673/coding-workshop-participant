@@ -7,7 +7,7 @@ from app.models.budget import BudgetEntry, BudgetType
 from app.models.project import Project
 from app.models.user import SystemRole
 from app.auth.middleware import require_auth, require_role, get_jwt_identity_uuid, is_admin
-from backend.app.api.projects import success, created, error, not_found, forbidden
+from app.api.helpers import success, created, error, not_found, forbidden
 
 bp = Blueprint("budgets", __name__, url_prefix="/projects/<uuid:project_id>/budget")
 
