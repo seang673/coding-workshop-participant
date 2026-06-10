@@ -1,0 +1,5 @@
+export BASE_URL="http://localhost:5000"
+export DATABASE_URL="postgresql://postgres:postgres123@localhost:5432/coding_workshop_db"
+export EMAIL="api.tester.1781099339@example.com"
+export PASSWORD="Workshop123"
+export FULL_NAME="API Tester"
