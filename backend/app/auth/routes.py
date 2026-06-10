@@ -13,6 +13,9 @@ bp = Blueprint("auth", __name__, url_prefix="/auth")
 # ------------------------------------------------------------------
 # POST /auth/register
 # ------------------------------------------------------------------
+SELF_REGISTERABLE_ROLES = {SystemRole.team_member, SystemRole.stakeholder}
+
+
 @bp.route("/register", methods=["POST"])
 def register():
     """
@@ -20,9 +23,9 @@ def register():
     Body: { email, password, full_name, system_role? }
     Returns: user object + token pair.
 
-    Note: in production you would restrict who can set system_role
-    (e.g. only admins can create admin accounts). For the workshop
-    the first registered user can self-assign any role.
+    Self-registration is limited to 'team_member' and 'stakeholder'.
+    'project_manager' and 'admin' accounts must be granted by an
+    existing admin via PATCH /users/<id>.
     """
     data = request.get_json(silent=True)
     if not data:
@@ -37,13 +40,18 @@ def register():
     if len(data["password"]) < 8:
         return jsonify({"error": "Password must be at least 8 characters"}), 422
 
-    # Validate role if provided
+    # Validate role, restricted to self-registerable roles
     role_value = data.get("system_role", SystemRole.team_member.value)
     try:
         role = SystemRole(role_value)
     except ValueError:
-        valid = [r.value for r in SystemRole]
-        return jsonify({"error": f"Invalid role. Must be one of: {valid}"}), 422
+        role = None
+
+    if role not in SELF_REGISTERABLE_ROLES:
+        return jsonify({
+            "error": "You can self-register as 'team_member' or 'stakeholder' only. "
+                     "Project manager and admin access must be granted by an administrator."
+        }), 422
 
     user = User(
         email=data["email"].lower().strip(),

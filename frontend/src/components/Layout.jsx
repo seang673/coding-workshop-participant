@@ -16,7 +16,7 @@ export default function Layout() {
           <Typography
             variant="h6"
             component={RouterLink}
-            to="/"
+            to="/dashboard"
             sx={{ flexGrow: 1, color: 'inherit', textDecoration: 'none' }}
           >
             ACME Project Tracker
@@ -24,6 +24,11 @@ export default function Layout() {
           <Button color="inherit" component={RouterLink} to="/projects">
             Projects
           </Button>
+          {user.system_role === 'admin' && (
+            <Button color="inherit" component={RouterLink} to="/admin/users">
+              Users
+            </Button>
+          )}
           <Typography variant="body2">{user.full_name}</Typography>
           <Button color="inherit" onClick={logout}>
             Logout

@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { useNavigate, Navigate } from 'react-router-dom'
-import { Box, Paper, TextField, Button, Typography, Alert } from '@mui/material'
+import { useNavigate, Navigate, Link as RouterLink } from 'react-router-dom'
+import { Box, Paper, TextField, Button, Typography, Alert, Link } from '@mui/material'
 import { useAuth } from '../context/AuthContext'
 
 export default function LoginPage() {
@@ -12,7 +12,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false)
 
   if (user) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/dashboard" replace />
   }
 
   async function handleSubmit(e) {
@@ -21,7 +21,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await login(email, password)
-      navigate('/')
+      navigate('/dashboard')
     } catch (err) {
       setError(err.response?.data?.error || 'Login failed. Please try again.')
     } finally {
@@ -78,6 +78,12 @@ export default function LoginPage() {
           >
             {loading ? 'Signing in…' : 'Sign In'}
           </Button>
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            Need an account?{' '}
+            <Link component={RouterLink} to="/register" underline="hover">
+              Register
+            </Link>
+          </Typography>
         </Box>
       </Paper>
     </Box>

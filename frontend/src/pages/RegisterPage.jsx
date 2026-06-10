@@ -1,6 +1,15 @@
 import { useState } from 'react'
 import { Navigate, useNavigate, Link as RouterLink } from 'react-router-dom'
-import { Box, Paper, TextField, Button, Typography, Alert, Link } from '@mui/material'
+import {
+  Box,
+  Paper,
+  TextField,
+  Button,
+  Typography,
+  Alert,
+  Link,
+  MenuItem,
+} from '@mui/material'
 import api from '../services/api'
 import { useAuth } from '../context/AuthContext'
 
@@ -15,11 +24,12 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [role, setRole] = useState('team_member')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   if (user) {
-    return <Navigate to="/" replace />
+    return <Navigate to="/dashboard" replace />
   }
 
   async function handleSubmit(e) {
@@ -32,6 +42,7 @@ export default function RegisterPage() {
         email,
         password,
         full_name: fullName,
+        system_role: role,
       })
       navigate('/login')
     } catch (err) {
@@ -90,6 +101,19 @@ export default function RegisterPage() {
             margin="normal"
             helperText="Password must be at least 8 characters"
           />
+          <TextField
+            select
+            label="Role"
+            value={role}
+            onChange={(e) => setRole(e.target.value)}
+            fullWidth
+            required
+            margin="normal"
+            helperText="Need Project Manager access? Register as Team Member and ask an admin to promote your account."
+          >
+            <MenuItem value="team_member">Team Member</MenuItem>
+            <MenuItem value="stakeholder">Stakeholder</MenuItem>
+          </TextField>
           <Button
             type="submit"
             variant="contained"
