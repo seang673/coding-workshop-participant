@@ -92,17 +92,29 @@ const server = http.createServer((req, res) => {
   delete headers['sec-fetch-dest'];
 
   // Keep only essential headers
+  const forwardedHeaders = {
+    'accept': headers.accept || 'application/json',
+    'content-type': headers['content-type'] || 'application/json',
+    'user-agent': headers['user-agent'] || 'proxy-server',
+    'host': target.host
+  };
+
+  // Forward content-length so the body reaches the backend intact
+  if (headers['content-length']) {
+    forwardedHeaders['content-length'] = headers['content-length'];
+  }
+
+  // Forward authorization token for authenticated requests
+  if (headers['authorization']) {
+    forwardedHeaders['authorization'] = headers['authorization'];
+  }
+
   const options = {
     hostname: target.hostname,
     port: target.port,
     path: target.path,
     method: req.method,
-    headers: {
-      'accept': headers.accept || 'application/json',
-      'content-type': headers['content-type'] || 'application/json',
-      'user-agent': headers['user-agent'] || 'proxy-server',
-      'host': target.host
-    }
+    headers: forwardedHeaders
   };
 
   const proxyReq = protocol.request(options, (proxyRes) => {
