@@ -1,0 +1,114 @@
+import { useState } from 'react'
+import { Navigate, useNavigate, Link as RouterLink } from 'react-router-dom'
+import { Box, Paper, TextField, Button, Typography, Alert, Link } from '@mui/material'
+import api from '../services/api'
+import { useAuth } from '../context/AuthContext'
+
+/**
+ * Render the user registration page.
+ * @returns {JSX.Element} Registration page component.
+ */
+export default function RegisterPage() {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+
+  const [fullName, setFullName] = useState('')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  if (user) {
+    return <Navigate to="/" replace />
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+
+    try {
+      await api.post('/auth/register', {
+        email,
+        password,
+        full_name: fullName,
+      })
+      navigate('/login')
+    } catch (err) {
+      setError(err.response?.data?.error || 'Registration failed. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <Box
+      sx={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '100vh',
+      }}
+    >
+      <Paper sx={{ p: 4, width: 360 }}>
+        <Typography variant="h5" component="h1" gutterBottom>
+          ACME Project Tracker
+        </Typography>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          Create your account
+        </Typography>
+        <Box component="form" onSubmit={handleSubmit} sx={{ mt: 2 }}>
+          {error && (
+            <Alert severity="error" sx={{ mb: 2 }}>
+              {error}
+            </Alert>
+          )}
+          <TextField
+            label="Full Name"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            fullWidth
+            required
+            margin="normal"
+          />
+          <TextField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            fullWidth
+            required
+            margin="normal"
+          />
+          <TextField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            fullWidth
+            required
+            margin="normal"
+            helperText="Password must be at least 8 characters"
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2 }}
+            disabled={loading}
+          >
+            {loading ? 'Creating account...' : 'Register'}
+          </Button>
+          <Typography variant="body2" sx={{ mt: 2 }}>
+            Already have an account?{' '}
+            <Link component={RouterLink} to="/login" underline="hover">
+              Sign in
+            </Link>
+          </Typography>
+        </Box>
+      </Paper>
+    </Box>
+  )
+}
+
+RegisterPage.propTypes = {}
