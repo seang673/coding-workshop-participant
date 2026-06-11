@@ -170,7 +170,12 @@ export default function ProjectMembersPanel({ projectId, canManage }) {
               </MenuItem>
             ))}
           </Select>
-          <Button variant="contained" disabled={!selectedUser} onClick={handleAddMember}>
+          <Button
+            variant="contained"
+            color="secondary"
+            disabled={!selectedUser}
+            onClick={handleAddMember}
+          >
             Add Member
           </Button>
         </Box>

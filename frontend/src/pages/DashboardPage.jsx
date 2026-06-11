@@ -45,25 +45,25 @@ export default function DashboardPage() {
       </Typography>
 
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
-        <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+        <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
           <Typography variant="caption" color="text.secondary">
             Active Projects
           </Typography>
           <Typography variant="h4">{kpis.active_projects}</Typography>
         </Paper>
-        <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+        <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
           <Typography variant="caption" color="text.secondary">
             At Risk
           </Typography>
           <Typography variant="h4">{kpis.at_risk_count}</Typography>
         </Paper>
-        <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+        <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
           <Typography variant="caption" color="text.secondary">
             Over-allocated Members
           </Typography>
           <Typography variant="h4">{kpis.over_allocated_members}</Typography>
         </Paper>
-        <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+        <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
           <Typography variant="caption" color="text.secondary">
             Deliverable Completion
           </Typography>
