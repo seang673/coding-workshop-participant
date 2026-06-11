@@ -23,7 +23,6 @@ class User(db.Model):
     # Relationships
     created_projects       = db.relationship("Project", back_populates="creator", foreign_keys="Project.created_by")
     project_assignments    = db.relationship("ProjectAssignment", back_populates="user")
-    deliverable_assignments = db.relationship("DeliverableAssignment", back_populates="user")
     time_entries           = db.relationship("TimeEntry", back_populates="user")
     budget_entries         = db.relationship("BudgetEntry", back_populates="created_by_user")
 

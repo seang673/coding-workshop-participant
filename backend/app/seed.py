@@ -14,7 +14,7 @@ from app import db
 from app.models.user import User, SystemRole
 from app.models.project import Project, ProjectAssignment, ProjectStatus, ProjectRole
 from app.models.deliverable import (
-    Deliverable, DeliverableAssignment, DeliverableStatus, Dependency, DependencyType
+    Deliverable, DeliverableStatus, Dependency, DependencyType
 )
 from app.models.budget import BudgetEntry, BudgetType, TimeEntry
 from app.auth.utils import hash_password
@@ -92,9 +92,6 @@ def run():
     db.session.flush()
 
     db.session.add_all([
-        DeliverableAssignment(deliverable_id=p1_d3.id, user_id=dev1.id),
-        DeliverableAssignment(deliverable_id=p1_d3.id, user_id=dev2.id),
-        DeliverableAssignment(deliverable_id=p1_d4.id, user_id=pm1.id),
         Dependency(from_deliverable_id=p1_d2.id, to_deliverable_id=p1_d3.id, dependency_type=DependencyType.finish_to_start),
         Dependency(from_deliverable_id=p1_d3.id, to_deliverable_id=p1_d4.id, dependency_type=DependencyType.finish_to_start),
         Dependency(from_deliverable_id=p1_d4.id, to_deliverable_id=p1_d5.id, dependency_type=DependencyType.finish_to_start),
@@ -134,8 +131,6 @@ def run():
     db.session.flush()
 
     db.session.add_all([
-        DeliverableAssignment(deliverable_id=p2_d2.id, user_id=dev3.id),
-        DeliverableAssignment(deliverable_id=p2_d3.id, user_id=dev2.id),
         Dependency(from_deliverable_id=p2_d2.id, to_deliverable_id=p2_d3.id, dependency_type=DependencyType.finish_to_start),
         Dependency(from_deliverable_id=p2_d3.id, to_deliverable_id=p2_d4.id, dependency_type=DependencyType.finish_to_start),
     ])
@@ -172,8 +167,6 @@ def run():
     db.session.flush()
 
     db.session.add_all([
-        DeliverableAssignment(deliverable_id=p3_d2.id, user_id=dev1.id),
-        DeliverableAssignment(deliverable_id=p3_d3.id, user_id=dev3.id),
         Dependency(from_deliverable_id=p3_d2.id, to_deliverable_id=p3_d3.id, dependency_type=DependencyType.finish_to_start),
         Dependency(from_deliverable_id=p3_d3.id, to_deliverable_id=p3_d4.id, dependency_type=DependencyType.finish_to_start),
     ])
@@ -208,8 +201,6 @@ def run():
     p4_d5 = Deliverable(project_id=p4.id, title="Deployment to production",  status=DeliverableStatus.not_started, due_date=today + timedelta(days=13), sort_order=5)
     db.session.add_all([p4_d1, p4_d2, p4_d3, p4_d4, p4_d5])
     db.session.flush()
-
-    db.session.add(DeliverableAssignment(deliverable_id=p4_d4.id, user_id=dev2.id))
 
     # ── Time entries (last 30 days — dev2 is over-allocated) ──────
     time_entries = []

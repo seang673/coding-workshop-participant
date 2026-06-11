@@ -46,7 +46,16 @@ export default function RegisterPage() {
       })
       navigate('/login')
     } catch (err) {
-      setError(err.response?.data?.error || 'Registration failed. Please try again.')
+      const apiError = err.response?.data?.error || err.response?.data?.message
+      if (apiError) {
+        setError(apiError)
+      } else if (err.response?.status === 403) {
+        setError('Request blocked by CDN route or cached bundle. Hard refresh and try again.')
+      } else if (err.response?.status) {
+        setError(`Registration failed (${err.response.status}). Please try again.`)
+      } else {
+        setError('Network error while registering. Please check your connection and try again.')
+      }
     } finally {
       setLoading(false)
     }

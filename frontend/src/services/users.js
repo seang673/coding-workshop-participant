@@ -5,6 +5,11 @@ export async function listUsers(params = {}) {
   return data.data.items
 }
 
+export async function searchUsers(params = {}) {
+  const { data } = await api.get('/users/search', { params })
+  return data.data.items
+}
+
 export async function updateUserRole(userId, systemRole) {
   const { data } = await api.patch(`/users/${userId}`, { system_role: systemRole })
   return data.data

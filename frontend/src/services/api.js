@@ -1,7 +1,21 @@
 import axios from 'axios'
 
-const baseURL = (import.meta.env.VITE_API_URL || 'http://localhost:5000') +
-  (import.meta.env.VITE_API_PATH_PREFIX || '')
+const configuredApiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+const configuredApiPathPrefix = import.meta.env.VITE_API_PATH_PREFIX || ''
+
+const shouldUseDefaultCloudPrefix =
+  typeof window !== 'undefined' &&
+  configuredApiUrl.replace(/\/+$/, '') === window.location.origin
+
+const apiPathPrefix = configuredApiPathPrefix ||
+  (shouldUseDefaultCloudPrefix ? '/api/app' : '')
+
+const normalizedApiUrl = configuredApiUrl.replace(/\/+$/, '')
+const normalizedApiPathPrefix = apiPathPrefix
+  ? `/${apiPathPrefix.replace(/^\/+|\/+$/g, '')}`
+  : ''
+
+const baseURL = `${normalizedApiUrl}${normalizedApiPathPrefix}`
 
 const api = axios.create({ baseURL })
 

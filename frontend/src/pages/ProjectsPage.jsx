@@ -22,15 +22,7 @@ import {
 } from '@mui/material'
 import { useAuth } from '../context/AuthContext'
 import { listProjects, createProject } from '../services/projects'
-
-const STATUS_COLORS = {
-  draft: 'default',
-  active: 'primary',
-  at_risk: 'warning',
-  delayed: 'error',
-  completed: 'success',
-  cancelled: 'default',
-}
+import { PROJECT_STATUS_COLORS, formatStatusLabel } from '../utils/statusColors'
 
 const emptyForm = { name: '', description: '', department: '', start_date: '', end_date: '' }
 
@@ -109,8 +101,8 @@ export default function ProjectsPage() {
                 <TableCell>{p.department || '—'}</TableCell>
                 <TableCell>
                   <Chip
-                    label={p.status.replace('_', ' ')}
-                    color={STATUS_COLORS[p.status] || 'default'}
+                    label={formatStatusLabel(p.status)}
+                    color={PROJECT_STATUS_COLORS[p.status] || 'default'}
                     size="small"
                   />
                 </TableCell>

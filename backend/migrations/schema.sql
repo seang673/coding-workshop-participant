@@ -162,26 +162,6 @@ COMMENT ON COLUMN deliverables.sort_order IS 'Client-controlled ordering within 
 
 
 -- ============================================================
--- DELIVERABLE ASSIGNMENTS
--- Who owns which deliverable. Multiple owners allowed.
--- ============================================================
-
-CREATE TABLE deliverable_assignments (
-    id             UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
-    deliverable_id UUID        NOT NULL REFERENCES deliverables(id) ON DELETE CASCADE,
-    user_id        UUID        NOT NULL REFERENCES users(id)        ON DELETE CASCADE,
-    assigned_at    TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-    CONSTRAINT uq_deliverable_user UNIQUE (deliverable_id, user_id)
-);
-
-CREATE INDEX idx_deliv_assign_deliverable ON deliverable_assignments(deliverable_id);
-CREATE INDEX idx_deliv_assign_user        ON deliverable_assignments(user_id);
-
-COMMENT ON TABLE deliverable_assignments IS 'Many-to-many: users <-> deliverables (multiple owners allowed).';
-
-
--- ============================================================
 -- DEPENDENCIES
 -- Directed dependency graph between deliverables.
 -- from_deliverable must progress before to_deliverable can.

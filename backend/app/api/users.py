@@ -20,6 +20,15 @@ def serialize_user(u: User) -> dict:
     }
 
 
+def serialize_user_summary(u: User) -> dict:
+    """Serialize the minimal user fields exposed by the search endpoint."""
+    return {
+        "id": str(u.id),
+        "email": u.email,
+        "full_name": u.full_name,
+    }
+
+
 # ------------------------------------------------------------------
 # GET /users  — admin only
 # ------------------------------------------------------------------
@@ -51,6 +60,31 @@ def list_users():
 
     query = query.order_by(User.full_name)
     return success(paginate(query, serialize_user))
+
+
+# ------------------------------------------------------------------
+# GET /users/search — admin or project_manager; minimal fields
+# ------------------------------------------------------------------
+@bp.route("/search", methods=["GET"])
+@require_role(SystemRole.admin, SystemRole.project_manager)
+def search_users():
+    """
+    Search active users by name or email. Admin and project manager only.
+
+    Returns minimal fields (id, full_name, email) for use in pickers such as
+    adding a project member, without exposing roles or account status.
+    ?search= filters by name or email.
+    """
+    query = User.query.filter_by(is_active=True)
+
+    if search := request.args.get("search"):
+        pattern = f"%{search}%"
+        query = query.filter(
+            db.or_(User.full_name.ilike(pattern), User.email.ilike(pattern))
+        )
+
+    query = query.order_by(User.full_name)
+    return success(paginate(query, serialize_user_summary))
 
 
 # ------------------------------------------------------------------

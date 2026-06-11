@@ -41,7 +41,6 @@ class Deliverable(db.Model):
 
     # Relationships
     project     = db.relationship("Project", back_populates="deliverables")
-    assignments = db.relationship("DeliverableAssignment", back_populates="deliverable", cascade="all, delete-orphan")
     time_entries = db.relationship("TimeEntry", back_populates="deliverable", cascade="all, delete-orphan")
 
     # Dependencies: deliverables this one blocks, and deliverables blocking this one
@@ -68,22 +67,6 @@ class Deliverable(db.Model):
             dep.from_deliverable.status != DeliverableStatus.completed
             for dep in self.blocked_by
         )
-
-
-class DeliverableAssignment(db.Model):
-    __tablename__ = "deliverable_assignments"
-
-    id             = db.Column(db.UUID(as_uuid=True), primary_key=True, server_default=db.text("gen_random_uuid()"))
-    deliverable_id = db.Column(db.UUID(as_uuid=True), db.ForeignKey("deliverables.id", ondelete="CASCADE"), nullable=False)
-    user_id        = db.Column(db.UUID(as_uuid=True), db.ForeignKey("users.id",        ondelete="CASCADE"), nullable=False)
-    assigned_at    = db.Column(db.DateTime(timezone=True), server_default=db.func.now())
-
-    __table_args__ = (
-        db.UniqueConstraint("deliverable_id", "user_id", name="uq_deliverable_user"),
-    )
-
-    deliverable = db.relationship("Deliverable", back_populates="assignments")
-    user        = db.relationship("User", back_populates="deliverable_assignments")
 
 
 class Dependency(db.Model):

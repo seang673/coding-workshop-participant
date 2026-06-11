@@ -24,6 +24,16 @@ export default function Layout() {
           <Button color="inherit" component={RouterLink} to="/projects">
             Projects
           </Button>
+          {user.system_role !== 'stakeholder' && (
+            <Button color="inherit" component={RouterLink} to="/time-log">
+              My Time Log
+            </Button>
+          )}
+          {['admin', 'project_manager'].includes(user.system_role) && (
+            <Button color="inherit" component={RouterLink} to="/allocation">
+              Allocation
+            </Button>
+          )}
           {user.system_role === 'admin' && (
             <Button color="inherit" component={RouterLink} to="/admin/users">
               Users

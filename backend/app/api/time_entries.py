@@ -4,7 +4,7 @@ from sqlalchemy import func
 
 from app import db
 from app.models.budget import TimeEntry
-from app.models.deliverable import Deliverable, DeliverableAssignment
+from app.models.deliverable import Deliverable
 from app.models.project import Project, ProjectAssignment
 from app.models.user import User, SystemRole
 from app.auth.middleware import require_auth, require_role, get_jwt_identity_uuid, is_admin

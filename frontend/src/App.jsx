@@ -9,6 +9,8 @@ import DashboardPage from './pages/DashboardPage'
 import ProjectsPage from './pages/ProjectsPage'
 import ProjectDetailPage from './pages/ProjectDetailPage'
 import AdminUsersPage from './pages/AdminUsersPage'
+import MyTimeLogPage from './pages/MyTimeLogPage'
+import AllocationReportPage from './pages/AllocationReportPage'
 
 const theme = createTheme({
   palette: {
@@ -30,6 +32,8 @@ function App() {
               <Route path="/dashboard" element={<DashboardPage />} />
               <Route path="/projects" element={<ProjectsPage />} />
               <Route path="/projects/:projectId" element={<ProjectDetailPage />} />
+              <Route path="/time-log" element={<MyTimeLogPage />} />
+              <Route path="/allocation" element={<AllocationReportPage />} />
               <Route path="/admin/users" element={<AdminUsersPage />} />
             </Route>
           </Routes>

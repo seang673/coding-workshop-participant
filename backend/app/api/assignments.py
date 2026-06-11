@@ -2,7 +2,6 @@ from flask import Blueprint, request
 
 from app import db
 from app.models.project import Project, ProjectAssignment, ProjectRole
-from app.models.deliverable import Deliverable, DeliverableAssignment
 from app.models.user import User, SystemRole
 from app.auth.middleware import require_role, require_auth, get_jwt_identity_uuid, is_admin
 from app.api.helpers import success, created, error, not_found, forbidden
@@ -107,77 +106,3 @@ def remove_project_member(project_id, user_id):
     db.session.delete(assignment)
     db.session.commit()
     return success(message="Member removed from project")
-
-
-# ================================================================
-# DELIVERABLE ASSIGNMENTS  — /projects/<pid>/deliverables/<did>/assignees
-# ================================================================
-
-@bp.route(
-    "/projects/<uuid:project_id>/deliverables/<uuid:deliverable_id>/assignees",
-    methods=["GET"]
-)
-@require_auth
-def list_deliverable_assignees(project_id, deliverable_id):
-    d = db.session.get(Deliverable, deliverable_id)
-    if not d or str(d.project_id) != str(project_id):
-        return not_found("Deliverable")
-    return success([
-        {
-            "user_id": str(a.user_id),
-            "full_name": a.user.full_name,
-            "email": a.user.email,
-            "assigned_at": a.assigned_at.isoformat() if a.assigned_at else None,
-        }
-        for a in d.assignments
-    ])
-
-
-@bp.route(
-    "/projects/<uuid:project_id>/deliverables/<uuid:deliverable_id>/assignees",
-    methods=["POST"]
-)
-@require_role(SystemRole.admin, SystemRole.project_manager)
-def assign_deliverable(project_id, deliverable_id):
-    """Assign a user to a deliverable. Body: { user_id }"""
-    d = db.session.get(Deliverable, deliverable_id)
-    if not d or str(d.project_id) != str(project_id):
-        return not_found("Deliverable")
-
-    data = request.get_json(silent=True) or {}
-    if not data.get("user_id"):
-        return error("user_id is required")
-
-    target_user = db.session.get(User, data["user_id"])
-    if not target_user:
-        return not_found("User")
-
-    existing = DeliverableAssignment.query.filter_by(
-        deliverable_id=deliverable_id, user_id=data["user_id"]
-    ).first()
-    if existing:
-        return error("User is already assigned to this deliverable", 409)
-
-    assignment = DeliverableAssignment(
-        deliverable_id=deliverable_id,
-        user_id=data["user_id"],
-    )
-    db.session.add(assignment)
-    db.session.commit()
-    return created(message=f"{target_user.full_name} assigned to deliverable")
-
-
-@bp.route(
-    "/projects/<uuid:project_id>/deliverables/<uuid:deliverable_id>/assignees/<uuid:user_id>",
-    methods=["DELETE"]
-)
-@require_role(SystemRole.admin, SystemRole.project_manager)
-def unassign_deliverable(project_id, deliverable_id, user_id):
-    assignment = DeliverableAssignment.query.filter_by(
-        deliverable_id=deliverable_id, user_id=user_id
-    ).first()
-    if not assignment:
-        return not_found("Assignment")
-    db.session.delete(assignment)
-    db.session.commit()
-    return success(message="User unassigned from deliverable")

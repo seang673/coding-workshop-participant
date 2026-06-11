@@ -31,10 +31,6 @@ def serialize_deliverable(d: Deliverable, include_children=False) -> dict:
         "due_date": d.due_date.isoformat() if d.due_date else None,
         "sort_order": d.sort_order,
         "is_blocked": d.is_blocked,
-        "assignees": [
-            {"user_id": str(a.user_id), "full_name": a.user.full_name}
-            for a in d.assignments
-        ],
         "created_at": d.created_at.isoformat() if d.created_at else None,
         "updated_at": d.updated_at.isoformat() if d.updated_at else None,
     }
