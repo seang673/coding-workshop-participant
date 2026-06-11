@@ -184,6 +184,22 @@ def allocation_report():
         .all()
     )
 
+    # Last-4-weeks breakdown (independent of `days`), oldest week first.
+    today = date.today()
+    weekly_since = today - timedelta(days=28)
+    weekly_hours: dict[str, list[float]] = {}
+    weekly_rows = (
+        db.session.query(TimeEntry.user_id, TimeEntry.entry_date, TimeEntry.hours)
+        .filter(TimeEntry.entry_date >= weekly_since)
+        .all()
+    )
+    for w_user_id, w_entry_date, w_hours in weekly_rows:
+        days_ago = (today - w_entry_date).days
+        week_from_now = days_ago // 7
+        if 0 <= week_from_now <= 3:
+            bucket = weekly_hours.setdefault(str(w_user_id), [0.0, 0.0, 0.0, 0.0])
+            bucket[3 - week_from_now] += float(w_hours)
+
     report = []
     for row in rows:
         user = db.session.get(User, row.user_id)
@@ -206,6 +222,9 @@ def allocation_report():
             "over_allocated": alloc_pct > 100,
             "project_count": len(project_ids),
             "project_ids": project_ids,
+            "weekly_hours": [
+                round(h, 2) for h in weekly_hours.get(str(user.id), [0.0, 0.0, 0.0, 0.0])
+            ],
         })
 
     over_count = sum(1 for r in report if r["over_allocated"])

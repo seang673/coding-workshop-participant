@@ -15,11 +15,31 @@ import {
   Chip,
   LinearProgress,
   Alert,
+  Tooltip,
 } from '@mui/material'
+import { alpha, useTheme } from '@mui/material/styles'
 import { useAuth } from '../context/AuthContext'
 import { getAllocationReport } from '../services/timeEntries'
 
 const PERIOD_OPTIONS = [7, 30, 90]
+const WEEK_LABELS = ['4 wks ago', '3 wks ago', '2 wks ago', 'This week']
+const WEEKLY_STANDARD_HOURS = 40
+
+/**
+ * Pick a heatmap color for a single week's logged hours, relative to a
+ * standard 40h work week.
+ * @param {object} theme - MUI theme.
+ * @param {number} hours - Hours logged that week.
+ * @returns {string} A CSS color value.
+ */
+function weekCellColor(theme, hours) {
+  if (!hours) return theme.palette.action.hover
+  const ratio = hours / WEEKLY_STANDARD_HOURS
+  if (ratio > 1) {
+    return alpha(theme.palette.error.main, Math.min(0.15 + (ratio - 1) * 0.5, 0.65))
+  }
+  return alpha(theme.palette.secondary.main, 0.15 + Math.min(ratio, 1) * 0.6)
+}
 
 /**
  * Cross-project resource allocation report. Admin and project manager only.
@@ -27,6 +47,7 @@ const PERIOD_OPTIONS = [7, 30, 90]
  */
 export default function AllocationReportPage() {
   const { user } = useAuth()
+  const theme = useTheme()
   const [days, setDays] = useState(30)
   const [report, setReport] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -116,6 +137,7 @@ export default function AllocationReportPage() {
               <TableCell>Total Hours</TableCell>
               <TableCell>Allocation</TableCell>
               <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Projects</TableCell>
+              <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>Last 4 Weeks</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -134,11 +156,34 @@ export default function AllocationReportPage() {
                 <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                   {m.project_count}
                 </TableCell>
+                <TableCell sx={{ display: { xs: 'none', md: 'table-cell' } }}>
+                  <Box sx={{ display: 'flex', gap: 0.5 }}>
+                    {(m.weekly_hours || [0, 0, 0, 0]).map((h, i) => (
+                      <Tooltip key={WEEK_LABELS[i]} title={`${WEEK_LABELS[i]}: ${h}h`}>
+                        <Box
+                          sx={{
+                            width: 30,
+                            height: 22,
+                            borderRadius: 0.5,
+                            bgcolor: weekCellColor(theme, h),
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '0.65rem',
+                            color: 'text.secondary',
+                          }}
+                        >
+                          {h > 0 ? h : ''}
+                        </Box>
+                      </Tooltip>
+                    ))}
+                  </Box>
+                </TableCell>
               </TableRow>
             ))}
             {report?.members.length === 0 && (
               <TableRow>
-                <TableCell colSpan={5} align="center">
+                <TableCell colSpan={6} align="center">
                   No time entries logged in this period.
                 </TableCell>
               </TableRow>

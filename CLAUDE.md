@@ -75,6 +75,24 @@ See `bin/README.md` for what each script under `bin/` does (`deploy-backend.sh`,
 cd backend && .venv/bin/python -m bandit -r app -q
 ```
 
+### Deploying to AWS (workshop participant environment)
+
+```sh
+./bin/setup-participant.sh        # refresh short-lived AWS creds into ENVIRONMENT.config (expire ~12-18h)
+source ENVIRONMENT.config
+
+./bin/deploy-backend.sh aws       # terraform apply + package backend/app/ as Lambda zip + update function code
+./bin/deploy-frontend.sh aws      # npm run build + aws s3 sync dist/ + CloudFront invalidation
+```
+
+- If `aws sts get-caller-identity` fails with an expired-token error, re-run
+  `./bin/setup-participant.sh` before deploying.
+- Frontend-only changes only need `deploy-frontend.sh`; backend-only changes only
+  need `deploy-backend.sh`.
+- Live site is served via CloudFront (`website_url` Terraform output), e.g.
+  `https://d3n0h80k1xj414.cloudfront.net`, backed by S3 bucket
+  `coding-workshop-website-<participant_id>`.
+
 ## Backend Architecture
 
 The backend is a single Flask app using the application-factory pattern
@@ -123,13 +141,41 @@ Flask-JWT-Extended, and Flask-CORS.
 ### Known gaps / things to watch for
 
 - `backend/README.md` and `infra/locals.tf` describe a generic per-service Lambda
-  layout (`backend/<service>/function.py`, auto-discovered by Terraform), but the
-  actual implementation is a single Flask app at `backend/app/` with `wsgi.py`. There
-  is currently no `function.py`/Lambda adapter wiring this Flask app into the
-  Terraform-discovered Lambda functions — this will need to be addressed for AWS
-  deployment.
-- `frontend/src/components`, `pages`, and `services` are currently empty
-  (`.gitkeep` only) — the React app is still the Vite starter template.
+  layout (`backend/<service>/function.py`, auto-discovered by Terraform).
+  `backend/app/function.py` provides this adapter, wiring the Flask app into the
+  Terraform-discovered Lambda function. `backend/app/` also contains vendored
+  dependency `dist-info` folders as part of the Lambda packaging.
+- An orphaned `deliverable_assignments` table exists in the live Aurora DB but is
+  unused by the application — candidate for removal in a future migration.
+
+## Frontend Architecture
+
+React + Vite + MUI, routed with React Router v6 (`frontend/src/App.jsx`).
+
+- **`src/theme.js`** — centralized MUI theme (`createTheme`): Indigo primary /
+  Teal secondary palette, shared `shape`/`typography`/component style overrides
+  (buttons, paper, app bar, table headers). Imported once into `App.jsx` and
+  applied via `ThemeProvider`.
+- **`src/context/AuthContext.jsx`** — auth state (current user, login/logout,
+  token storage); `useAuth()` hook used throughout.
+- **`src/components/Layout.jsx`** — authenticated shell: `AppBar` with desktop nav
+  (`Button` + `NavLink` for active-route styling) and a mobile hamburger `Drawer`,
+  wraps routed pages via `<Outlet />`. Nav links are filtered by `system_role`.
+- **`src/pages/`** — one component per route: `EntryPage`, `LoginPage`,
+  `RegisterPage`, `DashboardPage`, `ProjectsPage`, `ProjectDetailPage`,
+  `MyTimeLogPage`, `AllocationReportPage`, `AdminUsersPage`.
+- **`src/components/`** — `DeliverableTree` (recursive, hierarchical deliverable
+  list with status changes, dependencies, log-time and manage actions),
+  `ProjectMembersPanel`, `DeliverableFormDialog`, `LogTimeDialog`, `ConfirmDialog`.
+- **`src/services/`** — one Axios-based module per API resource (`api.js` holds
+  the configured client + interceptors; `projects.js`, `deliverables.js`,
+  `assignments.js`, `dashboard.js`, `timeEntries.js`, `users.js`).
+- **`src/utils/`** — `statusColors.js` (status/role label and color maps),
+  `deliverableTransitions.js` (mirrors backend `VALID_TRANSITIONS`).
+- **Responsive design**: implemented via MUI `sx` breakpoint objects
+  (`{ xs, sm, md }`) — table columns hidden on narrow screens, `Layout`'s nav
+  collapses into a `Drawer` below `md`, forms/cards use fluid widths. No separate
+  responsive library is used.
 
 ## Code Style (from `.github/instructions/`)
 
