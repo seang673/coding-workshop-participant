@@ -36,9 +36,10 @@ export default function LoginPage() {
         alignItems: 'center',
         justifyContent: 'center',
         minHeight: '100vh',
+        px: 2,
       }}
     >
-      <Paper sx={{ p: 4, width: 360 }}>
+      <Paper sx={{ p: { xs: 3, sm: 4 }, width: '100%', maxWidth: 360 }}>
         <Typography variant="h5" component="h1" gutterBottom>
           ACME Project Tracker
         </Typography>

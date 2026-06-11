@@ -1,22 +1,10 @@
 import uuid
 from datetime import date
 from decimal import Decimal
-from types import SimpleNamespace
 
-from app.models.budget import BudgetType
-from app.models.deliverable import Deliverable, DeliverableStatus
+from app.models.budget import BudgetEntry, BudgetType
+from app.models.deliverable import Dependency, Deliverable, DeliverableStatus
 from app.models.project import Project
-
-
-class _D:
-    def __init__(self, status):
-        self.status = status
-
-
-class _BudgetEntry:
-    def __init__(self, entry_type, amount):
-        self.entry_type = entry_type
-        self.amount = amount
 
 
 def test_project_completion_percentage_ignores_cancelled_deliverables():
@@ -27,10 +15,10 @@ def test_project_completion_percentage_ignores_cancelled_deliverables():
         created_by=uuid.uuid4(),
     )
     project.deliverables = [
-        _D(DeliverableStatus.completed),
-        _D(DeliverableStatus.in_progress),
-        _D(DeliverableStatus.cancelled),
-        _D(DeliverableStatus.completed),
+        Deliverable(title="D1", status=DeliverableStatus.completed),
+        Deliverable(title="D2", status=DeliverableStatus.in_progress),
+        Deliverable(title="D3", status=DeliverableStatus.cancelled),
+        Deliverable(title="D4", status=DeliverableStatus.completed),
     ]
 
     assert project.completion_percentage == 67
@@ -44,9 +32,24 @@ def test_project_budget_totals_sum_by_entry_type():
         created_by=uuid.uuid4(),
     )
     project.budget_entries = [
-        _BudgetEntry(BudgetType.planned, Decimal("1000.00")),
-        _BudgetEntry(BudgetType.planned, Decimal("250.00")),
-        _BudgetEntry(BudgetType.actual, Decimal("300.00")),
+        BudgetEntry(
+            entry_type=BudgetType.planned,
+            amount=Decimal("1000.00"),
+            period="2026-01",
+            created_by=uuid.uuid4(),
+        ),
+        BudgetEntry(
+            entry_type=BudgetType.planned,
+            amount=Decimal("250.00"),
+            period="2026-02",
+            created_by=uuid.uuid4(),
+        ),
+        BudgetEntry(
+            entry_type=BudgetType.actual,
+            amount=Decimal("300.00"),
+            period="2026-03",
+            created_by=uuid.uuid4(),
+        ),
     ]
 
     assert project.total_planned_budget == Decimal("1250.00")
@@ -55,8 +58,9 @@ def test_project_budget_totals_sum_by_entry_type():
 
 def test_deliverable_is_blocked_when_upstream_not_completed():
     deliverable = Deliverable(title="QA sign-off")
+    upstream = Deliverable(title="Build", status=DeliverableStatus.in_progress)
     deliverable.blocked_by = [
-        SimpleNamespace(from_deliverable=SimpleNamespace(status=DeliverableStatus.in_progress))
+        Dependency(from_deliverable=upstream)
     ]
 
     assert deliverable.is_blocked is True
@@ -64,9 +68,11 @@ def test_deliverable_is_blocked_when_upstream_not_completed():
 
 def test_deliverable_not_blocked_when_all_upstream_completed():
     deliverable = Deliverable(title="Release")
+    upstream_one = Deliverable(title="QA", status=DeliverableStatus.completed)
+    upstream_two = Deliverable(title="Security", status=DeliverableStatus.completed)
     deliverable.blocked_by = [
-        SimpleNamespace(from_deliverable=SimpleNamespace(status=DeliverableStatus.completed)),
-        SimpleNamespace(from_deliverable=SimpleNamespace(status=DeliverableStatus.completed)),
+        Dependency(from_deliverable=upstream_one),
+        Dependency(from_deliverable=upstream_two),
     ]
 
     assert deliverable.is_blocked is False

@@ -126,7 +126,7 @@ export default function MyTimeLogPage() {
               <TableCell>Date</TableCell>
               <TableCell>Deliverable</TableCell>
               <TableCell>Hours</TableCell>
-              <TableCell>Notes</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Notes</TableCell>
               <TableCell align="right">Action</TableCell>
             </TableRow>
           </TableHead>
@@ -136,7 +136,9 @@ export default function MyTimeLogPage() {
                 <TableCell>{entry.entry_date}</TableCell>
                 <TableCell>{entry.deliverable_title || '—'}</TableCell>
                 <TableCell>{entry.hours}</TableCell>
-                <TableCell>{entry.notes || '—'}</TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                  {entry.notes || '—'}
+                </TableCell>
                 <TableCell align="right">
                   <Button size="small" color="error" onClick={() => setDeleteTarget(entry)}>
                     Delete

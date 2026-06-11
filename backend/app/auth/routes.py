@@ -45,7 +45,7 @@ def register():
     try:
         role = SystemRole(role_value)
     except ValueError:
-        role = None
+        return jsonify({"error": f"Invalid role: {role_value}"}), 422
 
     if role not in SELF_REGISTERABLE_ROLES:
         return jsonify({

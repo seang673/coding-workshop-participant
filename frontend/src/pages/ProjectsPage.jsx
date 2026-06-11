@@ -83,9 +83,9 @@ export default function ProjectsPage() {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Department</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Department</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Timeline</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Timeline</TableCell>
               <TableCell align="right">Completion</TableCell>
             </TableRow>
           </TableHead>
@@ -98,7 +98,9 @@ export default function ProjectsPage() {
                 onClick={() => navigate(`/projects/${p.id}`)}
               >
                 <TableCell>{p.name}</TableCell>
-                <TableCell>{p.department || '—'}</TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                  {p.department || '—'}
+                </TableCell>
                 <TableCell>
                   <Chip
                     label={formatStatusLabel(p.status)}
@@ -106,7 +108,7 @@ export default function ProjectsPage() {
                     size="small"
                   />
                 </TableCell>
-                <TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
                   {p.start_date} → {p.end_date}
                 </TableCell>
                 <TableCell align="right">{p.completion_percentage}%</TableCell>

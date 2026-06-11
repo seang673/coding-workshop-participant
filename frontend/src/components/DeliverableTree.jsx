@@ -43,55 +43,58 @@ export default function DeliverableTree({
     <List dense disablePadding>
       {items.map((item) => (
         <Box key={item.id}>
-          <ListItem sx={{ pl: 2 + depth * 3 }}>
+          <ListItem sx={{ pl: 2 + depth * 3, flexWrap: 'wrap', rowGap: 1 }}>
             <ListItemText
               primary={item.title}
               secondary={item.due_date ? `Due ${item.due_date}` : null}
+              sx={{ flexBasis: { xs: '100%', sm: 'auto' }, pr: { sm: 1 } }}
             />
-            {item.is_blocked && (
-              <Chip label="blocked by dependency" color="error" size="small" sx={{ mr: 1 }} />
-            )}
-            <Select
-              size="small"
-              value={item.status}
-              disabled={!canChangeStatus}
-              onChange={(e) => onStatusChange(item, e.target.value)}
-              sx={{ minWidth: 140, mr: canManage ? 1 : 0 }}
-              color={DELIVERABLE_STATUS_COLORS[item.status]}
-            >
-              <MenuItem value={item.status}>{STATUS_LABELS[item.status]}</MenuItem>
-              {(VALID_TRANSITIONS[item.status] || []).map((s) => (
-                <MenuItem key={s} value={s}>
-                  {STATUS_LABELS[s]}
-                </MenuItem>
-              ))}
-            </Select>
-            {canLogTime && (
-              <Tooltip title="Log time">
-                <IconButton size="small" onClick={() => onLogTime(item)} sx={{ mr: canManage ? 0.5 : 0 }}>
-                  <AccessTimeIcon fontSize="small" />
-                </IconButton>
-              </Tooltip>
-            )}
-            {canManage && (
-              <Box sx={{ display: 'flex', gap: 0.5 }}>
-                <Tooltip title="Add sub-deliverable">
-                  <IconButton size="small" onClick={() => onAddChild(item)}>
-                    <AddIcon fontSize="small" />
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexWrap: 'wrap' }}>
+              {item.is_blocked && (
+                <Chip label="blocked by dependency" color="error" size="small" />
+              )}
+              <Select
+                size="small"
+                value={item.status}
+                disabled={!canChangeStatus}
+                onChange={(e) => onStatusChange(item, e.target.value)}
+                sx={{ minWidth: 140 }}
+                color={DELIVERABLE_STATUS_COLORS[item.status]}
+              >
+                <MenuItem value={item.status}>{STATUS_LABELS[item.status]}</MenuItem>
+                {(VALID_TRANSITIONS[item.status] || []).map((s) => (
+                  <MenuItem key={s} value={s}>
+                    {STATUS_LABELS[s]}
+                  </MenuItem>
+                ))}
+              </Select>
+              {canLogTime && (
+                <Tooltip title="Log time">
+                  <IconButton size="small" onClick={() => onLogTime(item)}>
+                    <AccessTimeIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
-                <Tooltip title="Edit">
-                  <IconButton size="small" onClick={() => onEdit(item)}>
-                    <EditIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Delete">
-                  <IconButton size="small" onClick={() => onDelete(item)}>
-                    <DeleteIcon fontSize="small" />
-                  </IconButton>
-                </Tooltip>
-              </Box>
-            )}
+              )}
+              {canManage && (
+                <>
+                  <Tooltip title="Add sub-deliverable">
+                    <IconButton size="small" onClick={() => onAddChild(item)}>
+                      <AddIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Edit">
+                    <IconButton size="small" onClick={() => onEdit(item)}>
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title="Delete">
+                    <IconButton size="small" onClick={() => onDelete(item)}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Tooltip>
+                </>
+              )}
+            </Box>
           </ListItem>
           {item.children?.length > 0 && (
             <DeliverableTree

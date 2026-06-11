@@ -82,13 +82,17 @@ export default function AdminUsersPage() {
         Users
       </Typography>
 
-      <Box component="form" onSubmit={handleSearchSubmit} sx={{ display: 'flex', gap: 2, mb: 2 }}>
+      <Box
+        component="form"
+        onSubmit={handleSearchSubmit}
+        sx={{ display: 'flex', gap: 2, mb: 2, flexWrap: 'wrap' }}
+      >
         <TextField
           label="Search by name or email"
           size="small"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          sx={{ minWidth: 300 }}
+          sx={{ minWidth: { xs: '100%', sm: 300 } }}
         />
         <Button type="submit" variant="outlined">
           Search
@@ -102,7 +106,7 @@ export default function AdminUsersPage() {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Email</TableCell>
               <TableCell>Role</TableCell>
               <TableCell>Status</TableCell>
               <TableCell align="right">Action</TableCell>
@@ -114,7 +118,9 @@ export default function AdminUsersPage() {
               return (
                 <TableRow key={u.id} hover>
                   <TableCell>{u.full_name}</TableCell>
-                  <TableCell>{u.email}</TableCell>
+                  <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                    {u.email}
+                  </TableCell>
                   <TableCell>
                     <Select
                       size="small"

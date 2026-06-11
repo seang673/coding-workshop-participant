@@ -186,9 +186,9 @@ export default function ProjectMembersPanel({ projectId, canManage }) {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Email</TableCell>
               <TableCell>Role</TableCell>
-              <TableCell>Assigned</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Assigned</TableCell>
               {canManage && <TableCell align="right">Action</TableCell>}
             </TableRow>
           </TableHead>
@@ -196,7 +196,7 @@ export default function ProjectMembersPanel({ projectId, canManage }) {
             {members.map((m) => (
               <TableRow key={m.user_id} hover>
                 <TableCell>{m.full_name}</TableCell>
-                <TableCell>{m.email}</TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{m.email}</TableCell>
                 <TableCell>
                   {canManage ? (
                     <Select
@@ -214,7 +214,9 @@ export default function ProjectMembersPanel({ projectId, canManage }) {
                     <Chip label={PROJECT_ROLE_LABELS[m.project_role] || m.project_role} size="small" />
                   )}
                 </TableCell>
-                <TableCell>{m.assigned_at ? m.assigned_at.slice(0, 10) : '—'}</TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                  {m.assigned_at ? m.assigned_at.slice(0, 10) : '—'}
+                </TableCell>
                 {canManage && (
                   <TableCell align="right">
                     <Button size="small" color="error" onClick={() => setRemoveTarget(m)}>

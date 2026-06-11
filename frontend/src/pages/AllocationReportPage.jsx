@@ -112,17 +112,17 @@ export default function AllocationReportPage() {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
-              <TableCell>Email</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Email</TableCell>
               <TableCell>Total Hours</TableCell>
               <TableCell>Allocation</TableCell>
-              <TableCell>Projects</TableCell>
+              <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>Projects</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {report?.members.map((m) => (
               <TableRow key={m.user_id} hover>
                 <TableCell>{m.full_name}</TableCell>
-                <TableCell>{m.email}</TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>{m.email}</TableCell>
                 <TableCell>{m.total_hours}</TableCell>
                 <TableCell>
                   <Chip
@@ -131,7 +131,9 @@ export default function AllocationReportPage() {
                     size="small"
                   />
                 </TableCell>
-                <TableCell>{m.project_count}</TableCell>
+                <TableCell sx={{ display: { xs: 'none', sm: 'table-cell' } }}>
+                  {m.project_count}
+                </TableCell>
               </TableRow>
             ))}
             {report?.members.length === 0 && (
