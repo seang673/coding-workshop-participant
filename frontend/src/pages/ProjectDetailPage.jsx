@@ -31,6 +31,7 @@ import DeliverableFormDialog from '../components/DeliverableFormDialog'
 import LogTimeDialog from '../components/LogTimeDialog'
 import ConfirmDialog from '../components/ConfirmDialog'
 import ProjectMembersPanel from '../components/ProjectMembersPanel'
+import BudgetPanel from '../components/BudgetPanel'
 
 const PROJECT_STATUSES = ['draft', 'active', 'at_risk', 'delayed', 'completed', 'cancelled']
 
@@ -92,6 +93,11 @@ export default function ProjectDetailPage() {
   async function reloadDeliverables() {
     const items = await listDeliverables(projectId)
     setDeliverables(items)
+  }
+
+  async function reloadProject() {
+    const refreshed = await getProject(projectId)
+    setProject(refreshed)
   }
 
   function openCreateDeliverable() {
@@ -321,6 +327,11 @@ export default function ProjectDetailPage() {
         Team
       </Typography>
       <ProjectMembersPanel projectId={projectId} canManage={canManageProject} />
+
+      <Typography variant="h5" component="h2" gutterBottom sx={{ mt: 3 }}>
+        Budget
+      </Typography>
+      <BudgetPanel projectId={projectId} canManage={canManageProject} onChange={reloadProject} />
 
       <Dialog open={editOpen} onClose={() => setEditOpen(false)} fullWidth maxWidth="sm">
         <DialogTitle>Edit Project</DialogTitle>

@@ -115,13 +115,13 @@ export default function AllocationReportPage() {
           </Paper>
           <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
             <Typography variant="caption" color="text.secondary">
-              Users Logged
+              Total Users Logged
             </Typography>
             <Typography variant="h6">{report.total_users_logged}</Typography>
           </Paper>
           <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
             <Typography variant="caption" color="text.secondary">
-              Over-allocated
+              Over-Allocated Users
             </Typography>
             <Typography variant="h6">{report.over_allocated_count}</Typography>
           </Paper>
@@ -148,7 +148,7 @@ export default function AllocationReportPage() {
                 <TableCell>{m.total_hours}</TableCell>
                 <TableCell>
                   <Chip
-                    label={`${m.allocation_percentage}%`}
+                    label={m.over_allocated ? `${m.allocation_percentage}% 🔥` : `${m.allocation_percentage}%`}
                     color={m.over_allocated ? 'error' : 'default'}
                     size="small"
                   />
