@@ -80,25 +80,25 @@ export default function AllocationReportPage() {
 
       {report && (
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, mb: 3 }}>
-          <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+          <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
             <Typography variant="caption" color="text.secondary">
               Period
             </Typography>
             <Typography variant="h6">{report.period_days} days</Typography>
           </Paper>
-          <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+          <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
             <Typography variant="caption" color="text.secondary">
               Standard Hours
             </Typography>
             <Typography variant="h6">{report.standard_hours}h</Typography>
           </Paper>
-          <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+          <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
             <Typography variant="caption" color="text.secondary">
               Users Logged
             </Typography>
             <Typography variant="h6">{report.total_users_logged}</Typography>
           </Paper>
-          <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+          <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
             <Typography variant="caption" color="text.secondary">
               Over-allocated
             </Typography>

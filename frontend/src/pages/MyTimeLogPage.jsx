@@ -112,7 +112,7 @@ export default function MyTimeLogPage() {
       )}
 
       {data && (
-        <Paper sx={{ p: 2, mb: 2 }}>
+        <Paper sx={{ p: 2, mb: 2, borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
           <Typography variant="h6">
             {data.total_hours}h logged in the last {data.period_days} days
           </Typography>

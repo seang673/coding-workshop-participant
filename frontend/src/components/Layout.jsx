@@ -14,7 +14,7 @@ import {
   Divider,
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
-import { Link as RouterLink, Outlet, Navigate } from 'react-router-dom'
+import { Link as RouterLink, NavLink, Outlet, Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Layout() {
@@ -59,7 +59,20 @@ export default function Layout() {
           </Typography>
           <Box sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center', gap: 2 }}>
             {navLinks.map((link) => (
-              <Button key={link.to} color="inherit" component={RouterLink} to={link.to}>
+              <Button
+                key={link.to}
+                color="inherit"
+                component={NavLink}
+                to={link.to}
+                className={({ isActive }) => (isActive ? 'nav-link-active' : '')}
+                sx={{
+                  borderBottom: '2px solid transparent',
+                  borderRadius: 0,
+                  '&.nav-link-active': {
+                    borderColor: 'secondary.main',
+                  },
+                }}
+              >
                 {link.label}
               </Button>
             ))}
@@ -80,9 +93,17 @@ export default function Layout() {
             {navLinks.map((link) => (
               <ListItemButton
                 key={link.to}
-                component={RouterLink}
+                component={NavLink}
                 to={link.to}
                 onClick={() => setDrawerOpen(false)}
+                className={({ isActive }) => (isActive ? 'nav-link-active' : '')}
+                sx={{
+                  borderLeft: '3px solid transparent',
+                  '&.nav-link-active': {
+                    borderColor: 'secondary.main',
+                    backgroundColor: 'action.selected',
+                  },
+                }}
               >
                 <ListItemText primary={link.label} />
               </ListItemButton>

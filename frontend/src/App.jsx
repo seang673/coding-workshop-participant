@@ -1,4 +1,4 @@
-import { ThemeProvider, createTheme, CssBaseline } from '@mui/material'
+import { ThemeProvider, CssBaseline } from '@mui/material'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './context/AuthContext'
 import Layout from './components/Layout'
@@ -11,12 +11,7 @@ import ProjectDetailPage from './pages/ProjectDetailPage'
 import AdminUsersPage from './pages/AdminUsersPage'
 import MyTimeLogPage from './pages/MyTimeLogPage'
 import AllocationReportPage from './pages/AllocationReportPage'
-
-const theme = createTheme({
-  palette: {
-    primary: { main: '#1565c0' },
-  },
-})
+import theme from './theme'
 
 function App() {
   return (

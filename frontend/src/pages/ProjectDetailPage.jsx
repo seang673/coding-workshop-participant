@@ -262,13 +262,13 @@ export default function ProjectDetailPage() {
       </Typography>
 
       <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 2, my: 2 }}>
-        <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+        <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
           <Typography variant="caption" color="text.secondary">
             Department
           </Typography>
           <Typography variant="h6">{project.department || '—'}</Typography>
         </Paper>
-        <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+        <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
           <Typography variant="caption" color="text.secondary">
             Timeline
           </Typography>
@@ -276,13 +276,13 @@ export default function ProjectDetailPage() {
             {project.start_date} → {project.end_date}
           </Typography>
         </Paper>
-        <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+        <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
           <Typography variant="caption" color="text.secondary">
             Completion
           </Typography>
           <Typography variant="h6">{project.completion_percentage}%</Typography>
         </Paper>
-        <Paper sx={{ p: 2, flex: '1 1 200px' }}>
+        <Paper sx={{ p: 2, flex: '1 1 200px', borderTop: '3px solid', borderTopColor: 'secondary.main' }}>
           <Typography variant="caption" color="text.secondary">
             Budget (Planned / Actual)
           </Typography>
@@ -298,7 +298,7 @@ export default function ProjectDetailPage() {
           Deliverables
         </Typography>
         {canManageProject && (
-          <Button variant="outlined" onClick={openCreateDeliverable}>
+          <Button variant="contained" color="secondary" onClick={openCreateDeliverable}>
             New Deliverable
           </Button>
         )}

@@ -70,7 +70,7 @@ export default function ProjectsPage() {
           Projects
         </Typography>
         {canCreate && (
-          <Button variant="contained" onClick={() => setOpen(true)}>
+          <Button variant="contained" color="secondary" onClick={() => setOpen(true)}>
             New Project
           </Button>
         )}
