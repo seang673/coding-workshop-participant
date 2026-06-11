@@ -1,10 +1,11 @@
 from flask import Blueprint, request
+from sqlalchemy.exc import IntegrityError
 
 from app import db
 from app.models.user import User, SystemRole
 from app.auth.middleware import require_role, require_auth, get_jwt_identity_uuid
 from app.auth.utils import hash_password
-from app.api.helpers import success, error, not_found, forbidden, paginate
+from app.api.helpers import success, created, error, not_found, forbidden, paginate
 
 bp = Blueprint("users", __name__, url_prefix="/users")
 
@@ -60,6 +61,50 @@ def list_users():
 
     query = query.order_by(User.full_name)
     return success(paginate(query, serialize_user))
+
+
+# ------------------------------------------------------------------
+# POST /users  — admin only
+# ------------------------------------------------------------------
+@bp.route("", methods=["POST"])
+@require_role(SystemRole.admin)
+def create_user():
+    """
+    Create a new user account. Admin only.
+    Body: { email, password, full_name, system_role }
+
+    Unlike POST /auth/register (self-registration, limited to
+    'team_member'/'stakeholder'), admins may create accounts with any role.
+    """
+    data = request.get_json(silent=True) or {}
+
+    missing = [f for f in ("email", "password", "full_name", "system_role") if not data.get(f)]
+    if missing:
+        return error(f"Missing required fields: {', '.join(missing)}", status=422)
+
+    if len(data["password"]) < 8:
+        return error("Password must be at least 8 characters", status=422)
+
+    try:
+        role = SystemRole(data["system_role"])
+    except ValueError:
+        return error(f"Invalid role: {data['system_role']}", status=422)
+
+    user = User(
+        email=data["email"].lower().strip(),
+        password_hash=hash_password(data["password"]),
+        full_name=data["full_name"].strip(),
+        system_role=role,
+    )
+
+    try:
+        db.session.add(user)
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        return error("An account with that email already exists", status=409)
+
+    return created(serialize_user(user), "User created")
 
 
 # ------------------------------------------------------------------

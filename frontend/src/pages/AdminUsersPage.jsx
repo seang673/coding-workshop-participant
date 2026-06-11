@@ -18,7 +18,8 @@ import {
   LinearProgress,
 } from '@mui/material'
 import { useAuth } from '../context/AuthContext'
-import { listUsers, updateUserRole, deactivateUser, reactivateUser } from '../services/users'
+import { listUsers, createUser, updateUserRole, deactivateUser, reactivateUser } from '../services/users'
+import AddUserDialog from '../components/AddUserDialog'
 
 const ROLE_LABELS = {
   admin: 'Admin',
@@ -32,6 +33,9 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')
+
+  const [addUserOpen, setAddUserOpen] = useState(false)
+  const [addUserError, setAddUserError] = useState('')
 
   async function loadUsers(searchTerm = '') {
     setLoading(true)
@@ -76,11 +80,34 @@ export default function AdminUsersPage() {
     loadUsers(search)
   }
 
+  async function handleAddUser(values) {
+    setAddUserError('')
+    try {
+      await createUser(values)
+      setAddUserOpen(false)
+      await loadUsers(search)
+    } catch (err) {
+      setAddUserError(err.response?.data?.error || 'Failed to create user')
+    }
+  }
+
   return (
     <Box>
-      <Typography variant="h4" component="h1" gutterBottom>
-        Users
-      </Typography>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2, flexWrap: 'wrap', gap: 2 }}>
+        <Typography variant="h4" component="h1">
+          Users
+        </Typography>
+        <Button
+          variant="contained"
+          color="secondary"
+          onClick={() => {
+            setAddUserError('')
+            setAddUserOpen(true)
+          }}
+        >
+          Add User
+        </Button>
+      </Box>
 
       <Box
         component="form"
@@ -165,6 +192,13 @@ export default function AdminUsersPage() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <AddUserDialog
+        open={addUserOpen}
+        error={addUserError}
+        onSubmit={handleAddUser}
+        onClose={() => setAddUserOpen(false)}
+      />
     </Box>
   )
 }

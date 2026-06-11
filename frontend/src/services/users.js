@@ -5,6 +5,11 @@ export async function listUsers(params = {}) {
   return data.data.items
 }
 
+export async function createUser(payload) {
+  const { data } = await api.post('/users', payload)
+  return data.data
+}
+
 export async function searchUsers(params = {}) {
   const { data } = await api.get('/users/search', { params })
   return data.data.items
